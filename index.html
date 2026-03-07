@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Taj Cutting Meat Shop – Premium Butcher</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Bebas+Neue&family=Lato:wght@300;400;700&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --red: #c0392b;
+    --dark-red: #7b1e1e;
+    --gold: #d4a940;
+    --cream: #f5efe6;
+    --dark: #1a0f0f;
+    --charcoal: #2c1a1a;
+    --smoke: #3d2b2b;
+  }
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--dark);
+    color: var(--cream);
+    font-family: 'Lato', sans-serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* CUSTOM CURSOR */
+  .cursor {
+    width: 20px; height: 20px;
+    border: 2px solid var(--gold);
+    border-radius: 50%;
+    position: fixed; pointer-events: none;
+    z-index: 9999; transform: translate(-50%,-50%);
+    transition: transform 0.1s, width 0.3s, height 0.3s, background 0.3s;
+    mix-blend-mode: difference;
+  }
+  .cursor-dot {
+    width: 6px; height: 6px;
+    background: var(--red);
+    border-radius: 50%;
+    position: fixed; pointer-events: none;
+    z-index: 9999; transform: translate(-50%,-50%);
+    transition: transform 0.05s;
+  }
+  .cursor.hover { width:50px; height:50px; background:rgba(212,169,64,0.15); }
+
+  /* NOISE OVERLAY */
+  body::before {
+    content:'';
+    position:fixed; inset:0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events:none; z-index:1; opacity:0.5;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top:0; left:0; right:0; z-index:100;
+    padding: 20px 60px;
+    display: flex; align-items:center; justify-content:space-between;
+    background: linear-gradient(to bottom, rgba(26,15,15,0.95), transparent);
+    backdrop-filter: blur(2px);
+    animation: fadeDown 1s ease forwards;
+  }
+  @keyframes fadeDown { from{opacity:0;transform:translateY(-30px)} to{opacity:1;transform:translateY(0)} }
+
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem; font-weight:900;
+    letter-spacing:2px;
+    background: linear-gradient(135deg, var(--gold), #fff5d6, var(--gold));
+    background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    text-shadow: none;
+  }
+  .logo span { font-style:italic; color: var(--red); -webkit-text-fill-color: var(--red); }
+
+  nav ul { list-style:none; display:flex; gap:40px; }
+  nav ul li a {
+    font-family:'Lato',sans-serif; font-size:0.85rem; letter-spacing:3px;
+    text-transform:uppercase; color: var(--cream);
+    text-decoration:none; position:relative; padding-bottom:4px;
+    transition: color 0.3s;
+  }
+  nav ul li a::after {
+    content:''; position:absolute; bottom:0; left:0; width:0; height:1px;
+    background: var(--gold); transition: width 0.4s ease;
+  }
+  nav ul li a:hover { color: var(--gold); }
+  nav ul li a:hover::after { width:100%; }
+
+  .nav-cta {
+    background: var(--red); color:#fff !important;
+    padding: 10px 24px; border-radius:2px;
+    letter-spacing:2px; transition: background 0.3s, transform 0.2s !important;
+  }
+  .nav-cta:hover { background: var(--dark-red) !important; transform:scale(1.05); }
+  .nav-cta::after { display:none !important; }
+
+  /* HERO */
+  #hero {
+    min-height: 100vh;
+    display: flex; align-items:center; justify-content:center;
+    position: relative; overflow:hidden;
+    background: radial-gradient(ellipse at 60% 40%, #3d1010 0%, var(--dark) 70%);
+  }
+
+  .hero-bg {
+    position:absolute; inset:0; z-index:0;
+    background:
+      radial-gradient(circle at 80% 20%, rgba(192,57,43,0.15) 0%, transparent 50%),
+      radial-gradient(circle at 20% 80%, rgba(212,169,64,0.08) 0%, transparent 50%);
+  }
+
+  /* Animated meat cuts decoration */
+  .hero-deco {
+    position:absolute; right:-60px; top:50%; transform:translateY(-50%);
+    width:650px; height:650px; opacity:0.08;
+    border-radius:50%;
+    border: 60px solid var(--red);
+    animation: slowSpin 30s linear infinite;
+  }
+  .hero-deco2 {
+    position:absolute; right:80px; top:50%; transform:translateY(-50%);
+    width:450px; height:450px; opacity:0.05;
+    border-radius:50%;
+    border: 2px solid var(--gold);
+    animation: slowSpinReverse 20s linear infinite;
+  }
+  @keyframes slowSpin { from{transform:translateY(-50%) rotate(0deg)} to{transform:translateY(-50%) rotate(360deg)} }
+  @keyframes slowSpinReverse { from{transform:translateY(-50%) rotate(0deg)} to{transform:translateY(-50%) rotate(-360deg)} }
+
+  .hero-content {
+    position:relative; z-index:2;
+    max-width:700px; padding:0 40px;
+    animation: heroReveal 1.2s ease 0.3s both;
+  }
+  @keyframes heroReveal { from{opacity:0;transform:translateY(40px)} to{opacity:1;transform:translateY(0)} }
+
+  .hero-tag {
+    font-family:'Lato',sans-serif; font-size:0.75rem;
+    letter-spacing:6px; text-transform:uppercase;
+    color: var(--gold); margin-bottom:20px;
+    display:flex; align-items:center; gap:12px;
+  }
+  .hero-tag::before {
+    content:''; width:40px; height:1px; background:var(--gold);
+  }
+
+  .hero-title {
+    font-family:'Playfair Display', serif;
+    font-size: clamp(3.5rem, 8vw, 7rem);
+    line-height:0.95; font-weight:900;
+    margin-bottom:24px;
+  }
+  .hero-title .line1 { display:block; color:#fff; }
+  .hero-title .line2 {
+    display:block; font-style:italic;
+    background: linear-gradient(90deg, var(--red), var(--gold));
+    background-clip:text; -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  }
+  .hero-title .line3 { display:block; color:#fff; }
+
+  .hero-sub {
+    font-size:1rem; line-height:1.8; color:rgba(245,239,230,0.7);
+    max-width:500px; margin-bottom:40px; letter-spacing:0.5px;
+  }
+
+  .hero-btns { display:flex; gap:20px; flex-wrap:wrap; }
+
+  .btn-primary {
+    background: var(--red);
+    color:#fff; padding:16px 40px;
+    font-family:'Lato',sans-serif; font-size:0.8rem;
+    letter-spacing:3px; text-transform:uppercase;
+    text-decoration:none; border:none; cursor:pointer;
+    position:relative; overflow:hidden;
+    transition: transform 0.3s;
+    clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+  }
+  .btn-primary::after {
+    content:''; position:absolute; inset:0;
+    background: rgba(255,255,255,0.1);
+    transform: translateX(-100%);
+    transition: transform 0.4s ease;
+  }
+  .btn-primary:hover { transform:translateY(-3px); }
+  .btn-primary:hover::after { transform:translateX(0); }
+
+  .btn-secondary {
+    background:transparent; color:var(--cream);
+    padding:16px 40px; font-family:'Lato',sans-serif;
+    font-size:0.8rem; letter-spacing:3px; text-transform:uppercase;
+    text-decoration:none; border:1px solid rgba(245,239,230,0.3);
+    transition: border-color 0.3s, color 0.3s, transform 0.3s;
+  }
+  .btn-secondary:hover { border-color:var(--gold); color:var(--gold); transform:translateY(-3px); }
+
+  .hero-stats {
+    position:absolute; bottom:60px; left:60px; right:60px;
+    display:flex; gap:60px; z-index:2;
+    animation: heroReveal 1.2s ease 0.8s both;
+  }
+  .stat { border-left:2px solid var(--red); padding-left:20px; }
+  .stat-num {
+    font-family:'Bebas Neue',sans-serif; font-size:2.5rem;
+    color:var(--gold); line-height:1;
+  }
+  .stat-label { font-size:0.7rem; letter-spacing:3px; text-transform:uppercase; color:rgba(245,239,230,0.5); }
+
+  /* SCROLL INDICATOR */
+  .scroll-hint {
+    position:absolute; bottom:30px; right:60px; z-index:2;
+    display:flex; flex-direction:column; align-items:center; gap:8px;
+    font-size:0.65rem; letter-spacing:3px; text-transform:uppercase; color:rgba(245,239,230,0.4);
+    animation: bounce 2s ease infinite;
+  }
+  .scroll-hint::after {
+    content:''; width:1px; height:50px; background:linear-gradient(to bottom,var(--gold),transparent);
+    animation: scrollLine 2s ease infinite;
+  }
+  @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+  @keyframes scrollLine { 0%{opacity:0;transform:scaleY(0);transform-origin:top} 50%{opacity:1} 100%{opacity:0;transform:scaleY(1)} }
+
+  /* MARQUEE */
+  .marquee-wrap {
+    background: var(--red); overflow:hidden;
+    padding:14px 0; border-top:1px solid rgba(255,255,255,0.1);
+  }
+  .marquee-track {
+    display:flex; gap:0; white-space:nowrap;
+    animation: marquee 25s linear infinite;
+  }
+  @keyframes marquee { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+  .marquee-item {
+    font-family:'Bebas Neue',sans-serif; font-size:1rem;
+    letter-spacing:4px; padding:0 40px; color:rgba(255,255,255,0.9);
+    border-right:1px solid rgba(255,255,255,0.2);
+  }
+  .marquee-item span { color:rgba(255,255,255,0.4); margin-left:40px; }
+
+  /* SECTION COMMON */
+  section { position:relative; z-index:2; }
+  .section-label {
+    font-size:0.7rem; letter-spacing:5px; text-transform:uppercase;
+    color:var(--gold); margin-bottom:16px;
+    display:flex; align-items:center; gap:12px;
+  }
+  .section-label::after { content:''; flex:1; max-width:60px; height:1px; background:var(--gold); }
+  .section-title {
+    font-family:'Playfair Display',serif; font-size:clamp(2rem,4vw,3.5rem);
+    font-weight:900; line-height:1.1; margin-bottom:20px;
+  }
+
+  /* ABOUT */
+  #about {
+    padding:120px 60px;
+    display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:center;
+    background: var(--charcoal);
+  }
+  .about-img-wrap {
+    position:relative; height:500px;
+  }
+  .about-img {
+    width:100%; height:100%; object-fit:cover;
+    filter:sepia(20%) contrast(1.1);
+  }
+  .about-img-frame {
+    position:absolute; inset:-15px -15px 15px 15px;
+    border:2px solid var(--gold); opacity:0.4; pointer-events:none;
+    animation: framePulse 4s ease infinite;
+  }
+  @keyframes framePulse { 0%,100%{opacity:0.4} 50%{opacity:0.7} }
+  .about-badge {
+    position:absolute; bottom:-20px; right:-20px;
+    width:120px; height:120px;
+    background:var(--red);
+    border-radius:50%;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    box-shadow:0 0 40px rgba(192,57,43,0.5);
+    animation: rotateBadge 10s linear infinite;
+  }
+  .about-badge-num { font-family:'Bebas Neue',sans-serif; font-size:2rem; color:#fff; }
+  .about-badge-txt { font-size:0.55rem; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,0.8); }
+  @keyframes rotateBadge { 0%,100%{transform:rotate(-5deg)} 50%{transform:rotate(5deg)} }
+
+  .about-text p { color:rgba(245,239,230,0.7); line-height:1.9; margin-bottom:20px; }
+  .about-features { display:flex; flex-direction:column; gap:12px; margin-top:30px; }
+  .about-feature {
+    display:flex; align-items:center; gap:16px;
+    font-size:0.9rem; color:var(--cream);
+  }
+  .about-feature::before {
+    content:'✦'; color:var(--gold); font-size:0.8rem; flex-shrink:0;
+  }
+
+  /* PRODUCTS */
+  #products {
+    padding:120px 60px;
+    background: var(--dark);
+  }
+  .products-header { text-align:center; margin-bottom:70px; }
+  .products-header .section-label { justify-content:center; }
+  .products-header .section-label::after, .products-header .section-label::before { max-width:60px; }
+  .products-header .section-label::before { content:''; flex:1; max-width:60px; height:1px; background:var(--gold); }
+
+  .products-grid {
+    display:grid; grid-template-columns:repeat(3,1fr); gap:2px;
+  }
+  .product-card {
+    position:relative; overflow:hidden; height:400px;
+    cursor:pointer;
+  }
+  .product-card img {
+    width:100%; height:100%; object-fit:cover;
+    transition: transform 0.7s ease, filter 0.5s;
+    filter: brightness(0.7) saturate(0.9);
+  }
+  .product-card:hover img { transform:scale(1.08); filter:brightness(0.5) saturate(1.2); }
+  .product-overlay {
+    position:absolute; inset:0;
+    background:linear-gradient(to top, rgba(26,15,15,0.9) 0%, transparent 60%);
+    display:flex; flex-direction:column; justify-content:flex-end; padding:30px;
+    transition: background 0.5s;
+  }
+  .product-card:hover .product-overlay {
+    background:linear-gradient(to top, rgba(192,57,43,0.7) 0%, rgba(26,15,15,0.4) 100%);
+  }
+  .product-tag {
+    font-size:0.65rem; letter-spacing:3px; text-transform:uppercase;
+    color:var(--gold); margin-bottom:8px;
+  }
+  .product-name {
+    font-family:'Playfair Display',serif; font-size:1.6rem; font-weight:700;
+    color:#fff; margin-bottom:8px;
+    transform:translateY(0); transition:transform 0.4s;
+  }
+  .product-card:hover .product-name { transform:translateY(-8px); }
+  .product-desc {
+    font-size:0.85rem; color:rgba(255,255,255,0.0); line-height:1.6;
+    transition: color 0.4s 0.1s, max-height 0.4s;
+    max-height:0; overflow:hidden;
+  }
+  .product-card:hover .product-desc { color:rgba(255,255,255,0.85); max-height:60px; }
+  .product-price {
+    font-family:'Bebas Neue',sans-serif; font-size:1.3rem; color:var(--gold);
+    margin-top:10px;
+  }
+
+  /* PROCESS */
+  #process {
+    padding:120px 60px;
+    background:var(--charcoal);
+  }
+  .process-grid {
+    display:grid; grid-template-columns:repeat(4,1fr); gap:40px; margin-top:60px;
+  }
+  .process-step {
+    position:relative; padding:40px 30px;
+    border:1px solid rgba(245,239,230,0.08);
+    transition: border-color 0.4s, transform 0.4s;
+    overflow:hidden;
+  }
+  .process-step::before {
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(135deg, rgba(192,57,43,0.05), transparent);
+    opacity:0; transition:opacity 0.4s;
+  }
+  .process-step:hover { border-color:var(--red); transform:translateY(-8px); }
+  .process-step:hover::before { opacity:1; }
+  .step-num {
+    font-family:'Bebas Neue',sans-serif; font-size:5rem;
+    color:rgba(192,57,43,0.15); line-height:1;
+    position:absolute; top:10px; right:20px;
+  }
+  .step-icon { font-size:2rem; margin-bottom:20px; }
+  .step-title { font-family:'Playfair Display',serif; font-size:1.2rem; font-weight:700; margin-bottom:12px; color:var(--cream); }
+  .step-desc { font-size:0.85rem; color:rgba(245,239,230,0.6); line-height:1.7; }
+
+  /* GALLERY */
+  #gallery {
+    padding:120px 60px;
+    background:var(--dark);
+  }
+  .gallery-grid {
+    display:grid;
+    grid-template-columns:repeat(12,1fr);
+    grid-template-rows:repeat(2,250px);
+    gap:4px; margin-top:60px;
+  }
+  .gallery-item { overflow:hidden; position:relative; }
+  .gallery-item:nth-child(1) { grid-column:1/6; grid-row:1/2; }
+  .gallery-item:nth-child(2) { grid-column:6/9; grid-row:1/2; }
+  .gallery-item:nth-child(3) { grid-column:9/13; grid-row:1/3; }
+  .gallery-item:nth-child(4) { grid-column:1/4; grid-row:2/3; }
+  .gallery-item:nth-child(5) { grid-column:4/9; grid-row:2/3; }
+  .gallery-item img {
+    width:100%; height:100%; object-fit:cover;
+    transition:transform 0.7s ease, filter 0.5s;
+    filter:sepia(10%) contrast(1.05);
+  }
+  .gallery-item:hover img { transform:scale(1.08); filter:sepia(0%) contrast(1.1) brightness(0.85); }
+  .gallery-item-overlay {
+    position:absolute; inset:0;
+    background:rgba(192,57,43,0);
+    transition:background 0.4s;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .gallery-item:hover .gallery-item-overlay { background:rgba(192,57,43,0.15); }
+
+  /* TESTIMONIALS */
+  #testimonials {
+    padding:120px 60px;
+    background:var(--charcoal);
+    text-align:center;
+  }
+  .testimonials-grid {
+    display:grid; grid-template-columns:repeat(3,1fr); gap:30px; margin-top:60px;
+  }
+  .testimonial-card {
+    padding:40px; border:1px solid rgba(245,239,230,0.08);
+    text-align:left; position:relative; overflow:hidden;
+    transition:transform 0.4s, border-color 0.4s;
+  }
+  .testimonial-card:hover { transform:translateY(-6px); border-color:rgba(212,169,64,0.4); }
+  .testimonial-card::before {
+    content:'"'; font-family:'Playfair Display',serif;
+    font-size:8rem; color:rgba(192,57,43,0.1);
+    position:absolute; top:-20px; left:10px; line-height:1;
+  }
+  .stars { color:var(--gold); font-size:0.9rem; margin-bottom:16px; letter-spacing:3px; }
+  .testimonial-text { font-size:0.95rem; line-height:1.8; color:rgba(245,239,230,0.8); margin-bottom:24px; font-style:italic; }
+  .testimonial-author { font-weight:700; color:var(--cream); font-size:0.9rem; }
+  .testimonial-role { font-size:0.75rem; color:var(--gold); letter-spacing:2px; text-transform:uppercase; }
+
+  /* CTA BANNER */
+  #cta {
+    padding:120px 60px;
+    background:linear-gradient(135deg, var(--dark-red) 0%, #5c1010 50%, var(--dark) 100%);
+    text-align:center; position:relative; overflow:hidden;
+  }
+  #cta::before {
+    content:''; position:absolute; inset:0;
+    background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+  .cta-title {
+    font-family:'Playfair Display',serif; font-size:clamp(2.5rem,5vw,4rem);
+    font-weight:900; color:#fff; margin-bottom:20px;
+  }
+  .cta-title em { font-style:italic; color:var(--gold); }
+  .cta-sub { font-size:1rem; color:rgba(255,255,255,0.7); margin-bottom:40px; }
+  .cta-form {
+    display:flex; gap:0; max-width:500px; margin:0 auto; border:1px solid rgba(255,255,255,0.2);
+  }
+  .cta-input {
+    flex:1; padding:16px 20px; background:rgba(0,0,0,0.3);
+    border:none; outline:none; color:#fff; font-family:'Lato',sans-serif;
+    font-size:0.9rem;
+  }
+  .cta-input::placeholder { color:rgba(255,255,255,0.4); }
+
+  /* FOOTER */
+  footer {
+    background:var(--dark); padding:80px 60px 40px;
+    border-top:1px solid rgba(245,239,230,0.06);
+  }
+  .footer-grid {
+    display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:60px; margin-bottom:60px;
+  }
+  .footer-brand .logo { font-size:1.6rem; margin-bottom:16px; display:block; }
+  .footer-brand p { font-size:0.85rem; line-height:1.8; color:rgba(245,239,230,0.5); max-width:280px; }
+  .footer-col h4 {
+    font-family:'Bebas Neue',sans-serif; font-size:1rem; letter-spacing:3px;
+    color:var(--gold); margin-bottom:20px;
+  }
+  .footer-col ul { list-style:none; }
+  .footer-col ul li { margin-bottom:10px; }
+  .footer-col ul li a {
+    font-size:0.85rem; color:rgba(245,239,230,0.5);
+    text-decoration:none; transition:color 0.3s;
+    display:flex; align-items:center; gap:8px;
+  }
+  .footer-col ul li a::before { content:'→'; color:var(--red); font-size:0.7rem; opacity:0; transition:opacity 0.3s, transform 0.3s; transform:translateX(-10px); }
+  .footer-col ul li a:hover { color:var(--cream); }
+  .footer-col ul li a:hover::before { opacity:1; transform:translateX(0); }
+  .footer-bottom {
+    display:flex; justify-content:space-between; align-items:center;
+    padding-top:30px; border-top:1px solid rgba(245,239,230,0.06);
+    font-size:0.75rem; color:rgba(245,239,230,0.3); letter-spacing:1px;
+  }
+  .social-links { display:flex; gap:20px; }
+  .social-links a {
+    color:rgba(245,239,230,0.4); text-decoration:none; font-size:0.75rem;
+    letter-spacing:2px; text-transform:uppercase; transition:color 0.3s;
+  }
+  .social-links a:hover { color:var(--gold); }
+
+  /* SCROLL REVEAL */
+  .reveal { opacity:0; transform:translateY(40px); transition:opacity 0.8s ease, transform 0.8s ease; }
+  .reveal.visible { opacity:1; transform:translateY(0); }
+  .reveal-left { opacity:0; transform:translateX(-40px); transition:opacity 0.8s ease, transform 0.8s ease; }
+  .reveal-left.visible { opacity:1; transform:translateX(0); }
+  .reveal-right { opacity:0; transform:translateX(40px); transition:opacity 0.8s ease, transform 0.8s ease; }
+  .reveal-right.visible { opacity:1; transform:translateX(0); }
+
+  /* FLOATING PARTICLES */
+  .particles { position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden; }
+  .particle {
+    position:absolute; width:2px; height:2px; background:var(--gold);
+    border-radius:50%; opacity:0;
+    animation: floatUp var(--dur) ease-in var(--delay) infinite;
+  }
+  @keyframes floatUp {
+    0%{opacity:0;transform:translateY(100vh) scale(0)}
+    10%{opacity:0.6}
+    90%{opacity:0.2}
+    100%{opacity:0;transform:translateY(-10vh) scale(1.5)}
+  }
+
+  /* LOADING SCREEN */
+  #loader {
+    position:fixed; inset:0; background:var(--dark);
+    z-index:9998; display:flex; align-items:center; justify-content:center;
+    flex-direction:column; gap:20px;
+    animation: loaderOut 0.8s ease 2.2s forwards;
+  }
+  @keyframes loaderOut { to{opacity:0;pointer-events:none} }
+  .loader-logo {
+    font-family:'Playfair Display',serif; font-size:2rem; font-weight:900;
+    color:var(--gold); letter-spacing:8px; text-transform:uppercase;
+    animation: loaderText 2s ease forwards;
+  }
+  @keyframes loaderText { from{letter-spacing:20px;opacity:0} to{letter-spacing:8px;opacity:1} }
+  .loader-bar-wrap { width:200px; height:2px; background:rgba(255,255,255,0.1); }
+  .loader-bar { height:100%; background:var(--red); animation:loaderFill 2s ease forwards; width:0; }
+  @keyframes loaderFill { to{width:100%} }
+
+  @media(max-width:768px) {
+    nav { padding:16px 24px; }
+    nav ul { display:none; }
+    #hero { padding:100px 24px 80px; }
+    .hero-stats { left:24px; right:24px; gap:30px; flex-wrap:wrap; bottom:30px; }
+    #about, #products, #process, #gallery, #testimonials, #cta, footer { padding:80px 24px; }
+    #about { grid-template-columns:1fr; }
+    .products-grid { grid-template-columns:1fr; }
+    .process-grid { grid-template-columns:1fr 1fr; }
+    .gallery-grid { grid-template-columns:1fr 1fr; grid-template-rows:auto; }
+    .gallery-item { grid-column:auto !important; grid-row:auto !important; height:200px; }
+    .testimonials-grid { grid-template-columns:1fr; }
+    .footer-grid { grid-template-columns:1fr 1fr; }
+    .footer-bottom { flex-direction:column; gap:16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-logo">Taj Cutting</div>
+  <div class="loader-bar-wrap"><div class="loader-bar"></div></div>
+</div>
+
+<!-- CURSOR -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-dot" id="cursorDot"></div>
+
+<!-- PARTICLES -->
+<div class="particles" id="particles"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">Taj <span>Cutting</span></div>
+  <ul>
+    <li><a href="#about">About</a></li>
+    <li><a href="#products">Our Cuts</a></li>
+    <li><a href="#process">Process</a></li>
+    <li><a href="#gallery">Gallery</a></li>
+    <li><a href="#cta" class="nav-cta">Order Now</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-deco"></div>
+  <div class="hero-deco2"></div>
+  <div class="hero-content">
+    <div class="hero-tag">Premium Butcher Since 1998</div>
+    <h1 class="hero-title">
+      <span class="line1">Crafted</span>
+      <span class="line2">With Passion,</span>
+      <span class="line3">Cut With Precision</span>
+    </h1>
+    <p class="hero-sub">
+      At Taj Cutting Meat Shop, every cut tells a story. We source only the finest halal meats, expertly butchered with generations of skill and unwavering dedication to quality.
+    </p>
+    <div class="hero-btns">
+      <a href="#products" class="btn-primary">Explore Our Cuts</a>
+      <a href="#about" class="btn-secondary">Our Story</a>
+    </div>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num" data-count="25">0</div>
+      <div class="stat-label">Years of Excellence</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num" data-count="50">0</div>
+      <div class="stat-label">Premium Cuts</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num" data-count="5000">0</div>
+      <div class="stat-label">Happy Customers</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num" data-count="100">0</div>
+      <div class="stat-label">% Halal Certified</div>
+    </div>
+  </div>
+  <div class="scroll-hint">Scroll</div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <div class="marquee-item">Premium Beef <span>✦</span></div>
+    <div class="marquee-item">Fresh Lamb <span>✦</span></div>
+    <div class="marquee-item">Tender Chicken <span>✦</span></div>
+    <div class="marquee-item">Goat Cuts <span>✦</span></div>
+    <div class="marquee-item">100% Halal <span>✦</span></div>
+    <div class="marquee-item">Custom Orders <span>✦</span></div>
+    <div class="marquee-item">Daily Fresh <span>✦</span></div>
+    <div class="marquee-item">Expert Butchers <span>✦</span></div>
+    <div class="marquee-item">Premium Beef <span>✦</span></div>
+    <div class="marquee-item">Fresh Lamb <span>✦</span></div>
+    <div class="marquee-item">Tender Chicken <span>✦</span></div>
+    <div class="marquee-item">Goat Cuts <span>✦</span></div>
+    <div class="marquee-item">100% Halal <span>✦</span></div>
+    <div class="marquee-item">Custom Orders <span>✦</span></div>
+    <div class="marquee-item">Daily Fresh <span>✦</span></div>
+    <div class="marquee-item">Expert Butchers <span>✦</span></div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-img-wrap reveal-left">
+    <img src="https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?w=600&q=80" alt="Butcher at work" class="about-img"/>
+    <div class="about-img-frame"></div>
+    <div class="about-badge">
+      <div class="about-badge-num">25+</div>
+      <div class="about-badge-txt">Yrs Expertise</div>
+    </div>
+  </div>
+  <div class="about-text reveal-right">
+    <div class="section-label">Our Story</div>
+    <h2 class="section-title">A Legacy of <br><em style="font-style:italic;color:var(--red)">Craft & Quality</em></h2>
+    <p>Founded in 1998, Taj Cutting Meat Shop began with a simple promise — to deliver the freshest, finest halal meat to every family's table. What started as a small neighbourhood butcher has grown into a beloved institution, trusted by thousands.</p>
+    <p>Every piece of meat we handle passes through the hands of master butchers who have spent years perfecting their craft. We believe that great food starts with great ingredients, and great ingredients start with us.</p>
+    <div class="about-features">
+      <div class="about-feature">100% Halal Certified – All animals slaughtered according to Islamic principles</div>
+      <div class="about-feature">Farm to Shop – Direct sourcing from trusted local and international farms</div>
+      <div class="about-feature">Custom Cuts – Tell us exactly how you want it, we deliver perfection</div>
+      <div class="about-feature">Daily Fresh Stock – Never frozen, always fresh delivered every morning</div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCTS -->
+<section id="products">
+  <div class="products-header reveal">
+    <div class="section-label">What We Offer</div>
+    <h2 class="section-title">Our Premium <em style="font-style:italic;color:var(--red)">Cuts</em></h2>
+    <p style="color:rgba(245,239,230,0.6);max-width:500px;margin:0 auto;line-height:1.8">From rich beef to tender lamb, every cut is prepared with care and expertise by our master butchers.</p>
+  </div>
+  <div class="products-grid">
+    <div class="product-card">
+      <img src="https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=600&q=80" alt="Beef"/>
+      <div class="product-overlay">
+        <div class="product-tag">Best Seller</div>
+        <div class="product-name">Prime Beef</div>
+        <div class="product-desc">Tenderloin, ribeye, sirloin – expertly aged and cut to perfection for your table.</div>
+        <div class="product-price">From PKR 850/kg</div>
+      </div>
+    </div>
+    <div class="product-card">
+      <img src="https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?w=600&q=80" alt="Lamb"/>
+      <div class="product-overlay">
+        <div class="product-tag">Fan Favourite</div>
+        <div class="product-name">Fresh Lamb</div>
+        <div class="product-desc">Succulent young lamb, perfectly marbled with rich flavour in every bite.</div>
+        <div class="product-price">From PKR 1,100/kg</div>
+      </div>
+    </div>
+    <div class="product-card">
+      <img src="https://www.spar.co.za/getattachment/5768ed78-f97c-45cf-99f6-3e5d81f69a1b/5768ed78-f97c-45cf-99f6-3e5d81f69a1b.aspx" alt="Chicken"/>
+      <div class="product-overlay">
+        <div class="product-tag">Daily Fresh</div>
+        <div class="product-name">Tender Chicken</div>
+        <div class="product-desc">Free-range halal chicken, whole or cut to your preference, delivered daily.</div>
+        <div class="product-price">From PKR 320/kg</div>
+      </div>
+    </div>
+    <div class="product-card">
+      <img src="https://tse2.mm.bing.net/th/id/OIP.pDEs00KrFhlyPocds9yDegAAAA?w=391&h=280&rs=1&pid=ImgDetMain&o=7&rm=3" alt="Goat"/>
+      <div class="product-overlay">
+        <div class="product-tag">Traditional</div>
+        <div class="product-name">Goat & Mutton</div>
+        <div class="product-desc">Traditional cuts of karahi, biryani-ready, or whole on request for special occasions.</div>
+        <div class="product-price">From PKR 950/kg</div>
+      </div>
+    </div>
+    <div class="product-card">
+      <img src="https://foodeymealkits.com.au/cdn/shop/products/Beef_Mince_IMG_1608_1024x1024.JPG?v=1560458154" alt="Mince"/>
+      <div class="product-overlay">
+        <div class="product-tag">Popular</div>
+        <div class="product-name">Premium Mince</div>
+        <div class="product-desc">Ground fresh to order, choose your fat ratio for kababs, burgers, and keema.</div>
+        <div class="product-price">From PKR 750/kg</div>
+      </div>
+    </div>
+    <div class="product-card">
+      <img src="https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?w=600&q=80" alt="Special"/>
+      <div class="product-overlay">
+        <div class="product-tag">Seasonal</div>
+        <div class="product-name">Special Orders</div>
+        <div class="product-desc">Goat, eid preparations, custom bulk orders – we cater to every need.</div>
+        <div class="product-price">Call for pricing</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section id="process">
+  <div class="reveal">
+    <div class="section-label">How We Work</div>
+    <h2 class="section-title">Our Quality <em style="font-style:italic;color:var(--red)">Process</em></h2>
+  </div>
+  <div class="process-grid">
+    <div class="process-step reveal">
+      <div class="step-num">01</div>
+      <div class="step-icon">🌿</div>
+      <div class="step-title">Ethical Sourcing</div>
+      <div class="step-desc">We partner with trusted halal farms ensuring the highest standards of animal welfare and ethical practices from the very start.</div>
+    </div>
+    <div class="process-step reveal" style="transition-delay:0.15s">
+      <div class="step-num">02</div>
+      <div class="step-icon">🔍</div>
+      <div class="step-title">Quality Inspection</div>
+      <div class="step-desc">Every delivery undergoes rigorous quality inspection by our experienced team before it ever reaches our cutting boards.</div>
+    </div>
+    <div class="process-step reveal" style="transition-delay:0.3s">
+      <div class="step-num">03</div>
+      <div class="step-icon">🥩</div>
+      <div class="step-title">Expert Butchering</div>
+      <div class="step-desc">Our master butchers bring decades of skill. Each cut is made with precision to maximize tenderness, flavour, and presentation.</div>
+    </div>
+    <div class="process-step reveal" style="transition-delay:0.45s">
+      <div class="step-num">04</div>
+      <div class="step-icon">📦</div>
+      <div class="step-title">Fresh Delivery</div>
+      <div class="step-desc">Hygienically packed and delivered fresh to your door or available in-shop daily. We never compromise on freshness.</div>
+    </div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section id="gallery">
+  <div class="reveal">
+    <div class="section-label">Visual Story</div>
+    <h2 class="section-title">Inside <em style="font-style:italic;color:var(--red)">Our Shop</em></h2>
+  </div>
+  <div class="gallery-grid reveal">
+    <div class="gallery-item">
+      <img src="https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=800&q=80" alt="Shop"/>
+      <div class="gallery-item-overlay"></div>
+    </div>
+    <div class="gallery-item">
+      <img src="https://images.unsplash.com/photo-1551218808-94e220e084d2?w=400&q=80" alt="Cuts"/>
+      <div class="gallery-item-overlay"></div>
+    </div>
+    <div class="gallery-item">
+      <img src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400&q=80" alt="Grilled"/>
+      <div class="gallery-item-overlay"></div>
+    </div>
+    <div class="gallery-item">
+      <img src="https://images.unsplash.com/photo-1573246123716-6b1782bfc499?w=400&q=80" alt="Spices"/>
+      <div class="gallery-item-overlay"></div>
+    </div>
+    <div class="gallery-item">
+      <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=700&q=80" alt="Food"/>
+      <div class="gallery-item-overlay"></div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="testimonials">
+  <div class="reveal">
+    <div class="section-label">What Customers Say</div>
+    <h2 class="section-title">Trusted By <em style="font-style:italic;color:var(--red)">Thousands</em></h2>
+  </div>
+  <div class="testimonials-grid">
+    <div class="testimonial-card reveal">
+      <div class="stars">★★★★★</div>
+      <p class="testimonial-text">Taj Cutting has been our family's go-to for over 10 years. The quality is unmatched — you can taste the difference immediately. Fresh, well-cut, and always halal.</p>
+      <div class="testimonial-author">Ahmed Raza</div>
+      <div class="testimonial-role">Loyal Customer</div>
+    </div>
+    <div class="testimonial-card reveal" style="transition-delay:0.15s">
+      <div class="stars">★★★★★</div>
+      <p class="testimonial-text">I ordered a whole goat for Eid and the team handled everything perfectly. Custom cuts, perfectly packed, delivered on time. Absolutely outstanding service!</p>
+      <div class="testimonial-author">Fatima Khan</div>
+      <div class="testimonial-role">Regular Customer</div>
+    </div>
+    <div class="testimonial-card reveal" style="transition-delay:0.3s">
+      <div class="stars">★★★★★</div>
+      <p class="testimonial-text">As a restaurant owner, quality and consistency matter most to me. Taj Cutting delivers both every single day. Our guests notice the difference — and they keep coming back.</p>
+      <div class="testimonial-author">Bilal Hussain</div>
+      <div class="testimonial-role">Restaurant Owner</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="cta">
+  <div class="reveal">
+    <h2 class="cta-title">Ready to Order the <em>Finest Cuts?</em></h2>
+    <p class="cta-sub">Visit us in-store or call ahead for custom orders, bulk pricing & special events</p>
+    <div style="display:flex;gap:20px;justify-content:center;flex-wrap:wrap;">
+      <a href="tel:+921234567890" class="btn-primary">📞 Call Us Now</a>
+      <a href="#products" class="btn-secondary">Browse Our Menu</a>
+    </div>
+    <div style="margin-top:50px;display:flex;justify-content:center;gap:60px;flex-wrap:wrap;">
+      <div style="text-align:center">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:3px;color:var(--gold);margin-bottom:6px;">LOCATION</div>
+        <div style="font-size:0.9rem;color:rgba(255,255,255,0.7)">Main Bazaar Road, Block 7<br>Karachi, Pakistan</div>
+      </div>
+      <div style="text-align:center">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:3px;color:var(--gold);margin-bottom:6px;">HOURS</div>
+        <div style="font-size:0.9rem;color:rgba(255,255,255,0.7)">Mon – Sat: 7am – 9pm<br>Sunday: 8am – 6pm</div>
+      </div>
+      <div style="text-align:center">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:3px;color:var(--gold);margin-bottom:6px;">CONTACT</div>
+        <div style="font-size:0.9rem;color:rgba(255,255,255,0.7)">+92-321-1234567<br>tajcutting@email.com</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <span class="logo">Taj <span>Cutting</span></span>
+      <p>Premium halal meat, expertly cut with decades of skill and passion. Serving families and businesses across Karachi since 1998.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Quick Links</h4>
+      <ul>
+        <li><a href="#about">About Us</a></li>
+        <li><a href="#products">Our Cuts</a></li>
+        <li><a href="#process">Our Process</a></li>
+        <li><a href="#gallery">Gallery</a></li>
+        <li><a href="#testimonials">Reviews</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Products</h4>
+      <ul>
+        
+        <li><a href="#">Fresh Lamb</a></li>
+        <li><a href="#">Chicken</a></li>
+        <li><a href="#">Goat & Mutton</a></li>
+        <li><a href="#">Special Orders</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <ul>
+        <li><a href="#">Main Bazaar, </a></li>
+        <li><a href="tel:+923211234567">+92-321-1234567</a></li>
+        <li><a href="mailto:tajcutting@email.com">tajcutting@email.com</a></li>
+        <li><a href="#">WhatsApp Orders</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 Taj Cutting Meat Shop. All Rights Reserved.</span>
+    <div class="social-links">
+      <a href="#">Facebook</a>
+      <a href="#">Instagram</a>
+      <a href="#">WhatsApp</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// CURSOR
+const cursor = document.getElementById('cursor');
+const cursorDot = document.getElementById('cursorDot');
+let cx=0,cy=0,tx=0,ty=0;
+document.addEventListener('mousemove', e => { tx=e.clientX; ty=e.clientY; cursorDot.style.left=tx+'px'; cursorDot.style.top=ty+'px'; });
+document.querySelectorAll('a,button,.product-card,.testimonial-card,.process-step').forEach(el => {
+  el.addEventListener('mouseenter',()=>cursor.classList.add('hover'));
+  el.addEventListener('mouseleave',()=>cursor.classList.remove('hover'));
+});
+function animCursor(){
+  cx+=(tx-cx)*0.12; cy+=(ty-cy)*0.12;
+  cursor.style.left=cx+'px'; cursor.style.top=cy+'px';
+  requestAnimationFrame(animCursor);
+}
+animCursor();
+
+// PARTICLES
+const pContainer = document.getElementById('particles');
+for(let i=0;i<25;i++){
+  const p = document.createElement('div');
+  p.className='particle';
+  const left = Math.random()*100;
+  const dur = (8+Math.random()*12)+'s';
+  const delay = (Math.random()*12)+'s';
+  const size = (1+Math.random()*2)+'px';
+  p.style.cssText=`left:${left}%;--dur:${dur};--delay:${delay};width:${size};height:${size};`;
+  pContainer.appendChild(p);
+}
+
+// COUNTER ANIMATION
+function animCount(el){
+  const target = +el.dataset.count;
+  let start=0; const dur=2000; const startTime=performance.now();
+  const suffix = target===100?'%':target>=1000?'+':'+';
+  function step(now){
+    const elapsed=now-startTime;
+    const progress=Math.min(elapsed/dur,1);
+    const ease=1-Math.pow(1-progress,3);
+    const val=Math.round(ease*target);
+    el.textContent = val+(target===100?'%':'+');
+    if(progress<1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+// SCROLL REVEAL
+const reveals = document.querySelectorAll('.reveal,.reveal-left,.reveal-right');
+const counters = document.querySelectorAll('.stat-num');
+let countersDone=false;
+const obs = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.classList.add('visible');
+      obs.unobserve(e.target);
+    }
+  });
+},{threshold:0.15,rootMargin:'0px 0px -50px 0px'});
+reveals.forEach(r=>obs.observe(r));
+
+const countObs = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting && !countersDone){
+      countersDone=true;
+      counters.forEach(animCount);
+    }
+  });
+},{threshold:0.5});
+if(counters.length) countObs.observe(counters[0]);
+
+// PARALLAX HERO DECORATIONS
+window.addEventListener('scroll',()=>{
+  const scrollY=window.scrollY;
+  const deco=document.querySelector('.hero-deco');
+  const deco2=document.querySelector('.hero-deco2');
+  if(deco) deco.style.transform=`translateY(calc(-50% + ${scrollY*0.2}px))`;
+  if(deco2) deco2.style.transform=`translateY(calc(-50% + ${scrollY*0.1}px))`;
+});
+
+// HIDE LOADER
+setTimeout(()=>{ document.getElementById('loader').style.display='none'; },3100);
+</script>
+</body>
+</html>
